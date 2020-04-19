@@ -23,7 +23,8 @@ def changed_files
 end
 
 def matched_files
-  `git grep -l -E \"#{keywords.join('|')}\" #{changed_files.join(' ')}`.split("\n")
+  `git diff --staged --name-only -G "#{keywords.join('|')}"`.split("\n")
+  # `git grep -l -E \"#{keywords.join('|')}\" #{changed_files.join(' ')}`.split("\n")
 end
 
 def on_master_branch?
