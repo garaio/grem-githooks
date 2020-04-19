@@ -3,41 +3,79 @@
 require 'pry'
 
 # Validates that you don't commit forbidden keywords to the repo
+# Validates that you don't commit on master branch
+# Validates that you don't commit forbidden files to the repo
 # You can skip this checking with 'git commit --no-verify'
 
 exit 0 if ARGV.include?('--no-verify')
-# Update this list with your own forbidden keywords
-KEYWORDS = %w[binding.pry console.log debugger @chrome].freeze
-KEYFILES = ['tmp.txt'].freeze
+
+def keywords
+  %w[binding.pry console.log debugger @chrome].freeze
+end
+
+def keyfiles
+  ['tmp.txt'].freeze
+end
+
 # list all the files staged for commit
-FILES_CHANGED = `git diff --cached --name-only --`.split
-FILES_MATCHED = `git grep -E "#{KEYWORDS.join('|')}" #{FILES_CHANGED.join(' ')}`.freeze
+def changed_files
+  `git diff --cached --name-only`.split
+end
+
+def matched_files
+  `git grep -l -E \"#{keywords.join('|')}\" #{changed_files.join(' ')}`.split("\n")
+end
+
+def on_master_branch?
+  current_branch = `git rev-parse --abbrev-ref HEAD`.chomp
+
+  current_branch == 'master'
+end
 
 def red(text)    "\033[31m#{text}\033[0m"; end
 def yellow(text) "\033[33m#{text}\033[0m"; end
-# search files for keywords
 
 def logo
-  puts File.read("logo.txt")
+  puts File.read('logo.txt')
+  puts "You can skip this checking with 'git commit --no-verify'"
 end
-      # %x(git grep -q #{keyword} #{file})
 
-def puts_file_matched
+def puts_files_matched
   puts red('# Check following lines:')
-  FILES_CHANGED.each do |file|
-    KEYWORDS.each do |keyword|
+  matched_files.each do |file|
+    keywords.each do |keyword|
       line = `git grep -n #{keyword} #{file} | awk -F ":" '{print $2}'`.split.join(', ')
+      next if line.empty?
+
       puts "#\t #{red file}:#{line} contains #{yellow keyword}."
     end
   end
-
 end
-puts "#{FILES_MATCHED}.inspect"
-binding.pry
-binding.pry
-unless FILES_MATCHED.empty?
+
+def matched_files_condition
+  matched_files.empty?
+end
+
+def keyfiles_condition
+  changed_files.any? { |e| keyfiles.include?(e) }
+end
+
+if on_master_branch? || !matched_files_condition || keyfiles_condition
   logo
-  puts_file_matched
+end
+
+unless matched_files_condition
+  puts_files_matched
+end
+
+if on_master_branch?
+  puts red('Your on Master Branch!!!')
+end
+
+if keyfiles_condition
+  changed_files.select { |e| keyfiles.include?(e) }.each do |keyfile|
+    puts red("The File #{keyfile} is forbidden to commit!!!")
+  end
 end
 
 exit 1
