@@ -1,6 +1,6 @@
 # .garaio-githooks
 
-You can skip this checking with ```git commit --no-verify'```
+You can skip this checking with ```git commit --no-verify```
 
 Validates that you don't commit forbidden keywords to the repo
 
