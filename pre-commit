@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'pry'
-
 # Validates that you don't commit forbidden keywords to the repo
 # Validates that you don't commit on master branch
 # Validates that you don't commit forbidden files to the repo
