@@ -1,0 +1,43 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+
+# Validates that you don't commit forbidden keywords to the repo
+# You can skip this checking with 'git commit --no-verify'
+
+exit 0 if ARGV.include?('--no-verify')
+# Update this list with your own forbidden keywords
+KEYWORDS = %w[binding.pry console.log debugger @chrome].freeze
+KEYFILES = ['tmp.txt'].freeze
+# list all the files staged for commit
+FILES_CHANGED = `git diff --cached --name-only --`.split
+FILES_MATCHED = `git grep -E "#{KEYWORDS.join('|')}" #{FILES_CHANGED.join(' ')}`.freeze
+
+def red(text)    "\033[31m#{text}\033[0m"; end
+def yellow(text) "\033[33m#{text}\033[0m"; end
+# search files for keywords
+
+def logo
+  puts File.read("logo.txt")
+end
+      # %x(git grep -q #{keyword} #{file})
+
+def puts_file_matched
+  puts red('# Check following lines:')
+  FILES_CHANGED.each do |file|
+    KEYWORDS.each do |keyword|
+      line = `git grep -n #{keyword} #{file} | awk -F ":" '{print $2}'`.split.join(', ')
+      puts "#\t #{red file}:#{line} contains #{yellow keyword}."
+    end
+  end
+
+end
+puts "#{FILES_MATCHED}.inspect"
+binding.pry
+binding.pry
+unless FILES_MATCHED.empty?
+  logo
+  puts_file_matched
+end
+
+exit 1
