@@ -66,16 +66,22 @@ end
 
 unless matched_files_condition
   puts_files_matched
+
+  exit 1
 end
 
 if on_master_branch?
   puts red('Your on Master Branch!!!')
+
+  exit 1
 end
 
 if keyfiles_condition
   changed_files.select { |e| keyfiles.include?(e) }.each do |keyfile|
     puts red("The File #{keyfile} is forbidden to commit!!!")
   end
+
+  exit 1
 end
 
-exit 1
+exit 0
