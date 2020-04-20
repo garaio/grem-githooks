@@ -12,7 +12,7 @@ def keywords
 end
 
 def keyfiles
-  ['tmp.txt'].freeze
+  ['app/assets/javascripts/i18n/translations.js'].freeze
 end
 
 # list all the files staged for commit
