@@ -35,7 +35,8 @@ def red(text)    "\033[31m#{text}\033[0m"; end
 def yellow(text) "\033[33m#{text}\033[0m"; end
 
 def logo
-  puts File.read('logo.txt')
+  file = File.expand_path(File.dirname(__FILE__)) + '/logo.txt'
+  puts File.read(file)
   puts "You can skip this checking with 'git commit --no-verify'"
 end
 
