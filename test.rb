@@ -1,5 +1,7 @@
-@chrome
-binding.pry
 
 
 - fooo bar baz
+
+class Foo < Bar
+
+end
