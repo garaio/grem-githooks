@@ -35,7 +35,7 @@ def red(text)    "\033[31m#{text}\033[0m"; end
 def yellow(text) "\033[33m#{text}\033[0m"; end
 
 def logo
-  file = File.expand_path(File.dirname(__FILE__)) + '/logo.txt'
+  file = File.expand_path(File.dirname(__FILE__)) + '/logo1.txt'
   puts File.read(file)
   puts "You can skip this checking with 'git commit --no-verify'"
 end
@@ -53,7 +53,15 @@ def puts_files_matched
 end
 
 def matched_files_condition
-  matched_files.empty?
+  found = false
+  matched_files.each do |matched_file|
+    keywords.each do |keyword|
+      line = `git grep -n #{keyword} #{matched_file}`
+      found = true unless line.empty?
+    end
+  end
+
+  matched_files.empty? || !found
 end
 
 def keyfiles_condition
