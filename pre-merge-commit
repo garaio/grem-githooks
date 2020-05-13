@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+read -n1 -p "Hast du ein rebase von master gemacht? [Y/n]" doit < /dev/tty
+case $doit in
+    n|N) exit 1 ;;
+    y|Y) exit 0 ;;
+    *) exit 1 ;;
+esac
