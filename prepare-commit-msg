@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+message_file = ARGV[0]
+original_message = File.read(message_file)
+current_branch = `git rev-parse --abbrev-ref HEAD`
+
+if current_branch.match(/[a-zA-Z]*(-1)[0-9]*/)
+  prefix_message = current_branch.match(/[a-zA-Z]*(-1)[0-9]*/)[0]
+  message = "#{prefix_message}: #{original_message}"
+
+  File.open(message_file, 'w') { |f| f.write message }
+end
